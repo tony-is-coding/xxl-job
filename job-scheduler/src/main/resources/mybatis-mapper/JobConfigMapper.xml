@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.job.scheduler.repo.newJob.dao.JobConfigMapper">
+
+    <resultMap id="JobInfoResultMap" type="com.xxl.job.scheduler.repo.newJob.model.JobConfig">
+        <id column="id" property="id"/>
+        <result column="job_desc" property="jobDesc"/>
+        <result column="owner" property="owner"/>
+        <result column="schedule_type" property="scheduleType"/>
+        <result column="schedule_conf" property="scheduleConf"/>
+        <result column="open_switch" property="openSwitch"/>
+        <result column="next_trigger_time" property="nextTriggerTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="saveBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_job_config (job_desc, owner, schedule_type, schedule_conf,
+        open_switch, next_trigger_time, create_time, update_time)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.jobDesc}, #{item.owner}, #{item.scheduleType}, #{item.scheduleConf},
+            #{item.openSwitch}, #{item.nextTriggerTime}, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+        </foreach>
+    </insert>
+
+
+    <!-- Select records where next_trigger_time is less than a specified value using resultMap -->
+    <select id="queryScheduleJobs" resultMap="JobInfoResultMap">
+        SELECT id, job_desc, owner, schedule_type, schedule_conf, open_switch,
+        next_trigger_time, create_time, update_time
+        FROM t_job_config
+        WHERE
+            #{maxNextTriggerTime} > next_trigger_time
+            AND open_switch = 1
+        order by next_trigger_time asc
+        limit #{limit}
+    </select>
+
+    <update id="updateNextTriggerTime" parameterType="com.xxl.job.scheduler.repo.newJob.model.JobConfig">
+        update t_job_config set next_trigger_time = #{nextTriggerTime} where id = #{id}
+    </update>
+
+
+    <update id="batchUpdateNextTriggerTime"  parameterType="java.util.List">
+        UPDATE t_job_config
+        SET next_trigger_time = CASE id
+        <foreach collection="list" item="item" index="index" separator=" ">
+            WHEN #{item.id} THEN #{item.nextTriggerTime}
+        </foreach>
+        END
+        WHERE id IN
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+
+
+
+</mapper>

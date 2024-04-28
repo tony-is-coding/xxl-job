@@ -1,15 +1,15 @@
 package com.xxl.job.admin.controller;
 
 import com.xxl.job.admin.core.exception.XxlJobException;
-import com.xxl.job.admin.core.model.XxlJobGroup;
-import com.xxl.job.admin.core.model.XxlJobInfo;
-import com.xxl.job.admin.core.model.XxlJobUser;
+import com.xxl.job.admin.repository.model.XxlJobGroup;
+import com.xxl.job.admin.repository.model.XxlJobInfo;
+import com.xxl.job.admin.repository.model.XxlJobUser;
 import com.xxl.job.admin.core.route.ExecutorRouteStrategyEnum;
 import com.xxl.job.admin.core.scheduler.MisfireStrategyEnum;
 import com.xxl.job.admin.core.scheduler.ScheduleTypeEnum;
 import com.xxl.job.admin.core.thread.JobScheduleHelper;
 import com.xxl.job.admin.core.util.I18nUtil;
-import com.xxl.job.admin.dao.XxlJobGroupDao;
+import com.xxl.job.admin.repository.dao.XxlJobGroupDao;
 import com.xxl.job.admin.service.LoginService;
 import com.xxl.job.admin.service.XxlJobService;
 import com.xxl.job.core.biz.model.ReturnT;

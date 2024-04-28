@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.job.scheduler.repo.newJob.dao.JobInstanceMapper">
+
+    <resultMap id="JobInstanceResultMap" type="com.xxl.job.scheduler.repo.newJob.model.JobInstance">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="job_id" property="jobId" jdbcType="BIGINT"/>
+        <result column="status" property="status" jdbcType="SMALLINT"/>
+        <result column="schedule_type" property="scheduleType" jdbcType="SMALLINT"/>
+        <result column="expected_trigger_time" property="expectedTriggerTime" jdbcType="BIGINT"/>
+        <result column="actually_trigger_time" property="actuallyTriggerTime" jdbcType="BIGINT"/>
+        <result column="scheduler_params" property="schedulerParams" jdbcType="VARCHAR"/>
+        <result column="finish_time" property="finishTime" jdbcType="BIGINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+<!--    <select id="selectById" resultMap="JobInstanceResultMap">-->
+<!--        SELECT * FROM t_job_instance WHERE id = #{id}-->
+<!--    </select>-->
+    <insert id="saveBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_job_instance (job_id, status, schedule_type, expected_trigger_time,
+        actually_trigger_time, scheduler_params, finish_time, create_time)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.jobId}, #{item.status}, #{item.scheduleType}, #{item.expectedTriggerTime},
+            #{item.actuallyTriggerTime}, #{item.schedulerParams}, #{item.finishTime}, CURRENT_TIMESTAMP())
+        </foreach>
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="JobInstanceResultMap">
+        SELECT id, job_id, status, schedule_type, expected_trigger_time,
+               actually_trigger_time, scheduler_params, finish_time, create_time
+        FROM t_job_instance
+        WHERE id = #{id}
+    </select>
+
+    <!-- Update operation for Job Instance -->
+    <update id="updateById" parameterType="com.xxl.job.scheduler.repo.newJob.model.JobInstance">
+        UPDATE `t_job_instance`
+        SET
+            `job_id` = #{jobId},
+            `status` = #{status},
+            `schedule_type` = #{scheduleType},
+            `expected_trigger_time` = #{expectedTriggerTime},
+            `actually_trigger_time` = #{actuallyTriggerTime},
+            `scheduler_params` = #{schedulerParams},
+            `finish_time` = #{finishTime}
+        WHERE `id` = #{id}
+    </update>
+
+
+</mapper>

@@ -1,11 +1,11 @@
 package com.xxl.job.admin.controller;
 
 import com.xxl.job.admin.controller.annotation.PermissionLimit;
-import com.xxl.job.admin.core.model.XxlJobGroup;
-import com.xxl.job.admin.core.model.XxlJobUser;
+import com.xxl.job.admin.repository.model.XxlJobGroup;
+import com.xxl.job.admin.repository.model.XxlJobUser;
 import com.xxl.job.admin.core.util.I18nUtil;
-import com.xxl.job.admin.dao.XxlJobGroupDao;
-import com.xxl.job.admin.dao.XxlJobUserDao;
+import com.xxl.job.admin.repository.dao.XxlJobGroupDao;
+import com.xxl.job.admin.repository.dao.XxlJobUserDao;
 import com.xxl.job.admin.service.LoginService;
 import com.xxl.job.core.biz.model.ReturnT;
 import org.springframework.stereotype.Controller;

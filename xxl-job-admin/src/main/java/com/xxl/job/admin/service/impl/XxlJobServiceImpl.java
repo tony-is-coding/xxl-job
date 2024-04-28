@@ -1,10 +1,10 @@
 package com.xxl.job.admin.service.impl;
 
-import com.xxl.job.admin.core.cron.CronExpression;
-import com.xxl.job.admin.core.model.XxlJobGroup;
-import com.xxl.job.admin.core.model.XxlJobInfo;
-import com.xxl.job.admin.core.model.XxlJobLogReport;
-import com.xxl.job.admin.core.model.XxlJobUser;
+import com.xxl.job.admin.repository.dao.*;
+import com.xxl.job.admin.repository.model.XxlJobGroup;
+import com.xxl.job.admin.repository.model.XxlJobInfo;
+import com.xxl.job.admin.repository.model.XxlJobLogReport;
+import com.xxl.job.admin.repository.model.XxlJobUser;
 import com.xxl.job.admin.core.route.ExecutorRouteStrategyEnum;
 import com.xxl.job.admin.core.scheduler.MisfireStrategyEnum;
 import com.xxl.job.admin.core.scheduler.ScheduleTypeEnum;
@@ -12,8 +12,8 @@ import com.xxl.job.admin.core.thread.JobScheduleHelper;
 import com.xxl.job.admin.core.thread.JobTriggerPoolHelper;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
 import com.xxl.job.admin.core.util.I18nUtil;
-import com.xxl.job.admin.dao.*;
 import com.xxl.job.admin.service.XxlJobService;
+import com.xxl.job.commons.auxiliary.TimingStrategyHandlerHolder;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
 import com.xxl.job.core.glue.GlueTypeEnum;
@@ -81,7 +81,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 			return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("schedule_type")+I18nUtil.getString("system_unvalid")) );
 		}
 		if (scheduleTypeEnum == ScheduleTypeEnum.CRON) {
-			if (jobInfo.getScheduleConf()==null || !CronExpression.isValidExpression(jobInfo.getScheduleConf())) {
+			if (jobInfo.getScheduleConf()==null || !TimingStrategyHandlerHolder.isValidExpression(jobInfo.getScheduleConf())) {
 				return new ReturnT<String>(ReturnT.FAIL_CODE, "Cron"+I18nUtil.getString("system_unvalid"));
 			}
 		} else if (scheduleTypeEnum == ScheduleTypeEnum.FIX_RATE/* || scheduleTypeEnum == ScheduleTypeEnum.FIX_DELAY*/) {
@@ -185,7 +185,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 			return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("schedule_type")+I18nUtil.getString("system_unvalid")) );
 		}
 		if (scheduleTypeEnum == ScheduleTypeEnum.CRON) {
-			if (jobInfo.getScheduleConf()==null || !CronExpression.isValidExpression(jobInfo.getScheduleConf())) {
+			if (jobInfo.getScheduleConf()==null || !TimingStrategyHandlerHolder.isValidExpression(jobInfo.getScheduleConf())) {
 				return new ReturnT<String>(ReturnT.FAIL_CODE, "Cron"+I18nUtil.getString("system_unvalid") );
 			}
 		} else if (scheduleTypeEnum == ScheduleTypeEnum.FIX_RATE /*|| scheduleTypeEnum == ScheduleTypeEnum.FIX_DELAY*/) {

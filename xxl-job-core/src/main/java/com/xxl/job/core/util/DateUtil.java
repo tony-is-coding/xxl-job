@@ -6,6 +6,10 @@ import org.slf4j.LoggerFactory;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,9 +26,17 @@ public class DateUtil {
     private static Logger logger = LoggerFactory.getLogger(DateUtil.class);
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
-    private static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-
+    private static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+    private static DateTimeFormatter FORMATTER =  DateTimeFormatter.ofPattern(DATETIME_FORMAT);
     private static final ThreadLocal<Map<String, DateFormat>> dateFormatThreadLocal = new ThreadLocal<Map<String, DateFormat>>();
+
+    public static String fromLong(long milliseconds){
+        LocalDateTime dateTime = Instant.ofEpochMilli(milliseconds)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+        return dateTime.format(FORMATTER);
+    }
+
     private static DateFormat getDateFormat(String pattern) {
         if (pattern==null || pattern.trim().length()==0) {
             throw new IllegalArgumentException("pattern cannot be empty.");
