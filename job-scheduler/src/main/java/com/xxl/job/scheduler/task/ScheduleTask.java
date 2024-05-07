@@ -54,7 +54,7 @@ public class ScheduleTask implements TimerTask {
     public void run() {
         String traceId = UUID.randomUUID().toString();
         MDC.put("traceId", traceId);
-        reentrantLock.lock();
+//        reentrantLock.lock();
         // lock
         // 查询最近 未来20s 内需要执行的SQL job
         long nowTime = System.currentTimeMillis();
@@ -92,7 +92,7 @@ public class ScheduleTask implements TimerTask {
                        if(instance.getExpectedTriggerTime() > now){
                            delay = jobInfo.getNextTriggerTime() - now;
                        }
-                       log.info("分派任务{}|delay:{}, triggerTime:{}, jobId:{}", instance.getId(), delay, DateUtil.fromLong(instance.getExpectedTriggerTime()), instance.getJobId());
+                       log.info("插入指针|分派任务{}|delay:{}, triggerTime:{}, jobId:{}|插入指针", instance.getId(), delay, DateUtil.fromLong(instance.getExpectedTriggerTime()), instance.getJobId());
                        InstanceTimeWheelService.schedule(instance.getId(),delay, () -> {
                            if(ctx != null){
                                MDC.setContextMap(ctx);
@@ -114,7 +114,7 @@ public class ScheduleTask implements TimerTask {
                }
             });
         }
-        reentrantLock.unlock();
+//        reentrantLock.unlock();
         // unlock
     }
 

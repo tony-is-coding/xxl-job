@@ -4,6 +4,7 @@ import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.xxl.job.commons.utils.CommonUtils;
+import com.xxl.job.commons.utils.DateUtil;
 import com.xxl.job.commons.utils.RejectedExecutionHandlerFactory;
 import lombok.extern.slf4j.Slf4j;
 
@@ -83,9 +84,10 @@ public class HashedWheelTimer implements Timer {
     }
 
     @Override
-    public TimerFuture schedule(TimerTask task, long delay, TimeUnit unit) {
+    public TimerFuture schedule(TimerTask task, long delay, TimeUnit unit, long taskId) {
 
         long targetTime = System.currentTimeMillis() + unit.toMillis(delay);
+        log.info("插入指针|任务{}计划调度时间:{}|", taskId, DateUtil.fromLong(targetTime));
         HashedWheelTimerFuture timerFuture = new HashedWheelTimerFuture(task, targetTime);
 
         // 直接运行到期、过期任务

@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Echo009
@@ -20,6 +21,8 @@ import java.util.Optional;
 public class CronTimingStrategyHandler extends AbstractTimingStrategyHandler {
 
     private final CronParser cronParser;
+
+    private final  ConcurrentHashMap<String, Cron> CRON_CACHE = new ConcurrentHashMap<>(64);
 
     /**
      * @see CronDefinitionBuilder#instanceDefinitionFor
@@ -40,6 +43,19 @@ public class CronTimingStrategyHandler extends AbstractTimingStrategyHandler {
         this.cronParser = new CronParser(cronDefinition);
     }
 
+    public Cron getCron(String exp){
+        Cron cron = CRON_CACHE.get(exp);
+        if(cron == null){
+            synchronized (CRON_CACHE){
+                cron = CRON_CACHE.get(exp);
+                if(cron == null){
+                    cron = cronParser.parse(exp);
+                    CRON_CACHE.put(exp,cron);
+                }
+            }
+        }
+        return cron;
+    }
 
     @Override
     public void checkValid(String timeExpression) {
@@ -48,7 +64,7 @@ public class CronTimingStrategyHandler extends AbstractTimingStrategyHandler {
 
     @Override
     public Long calculateNextTriggerTime0(Long preTriggerTime, String timeExpression) {
-        Cron cron = cronParser.parse(timeExpression);
+        Cron cron = getCron(timeExpression);
         ExecutionTime executionTime = ExecutionTime.forCron(cron);
         Instant instant = Instant.ofEpochMilli(preTriggerTime);
         ZonedDateTime preZonedDateTime = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());

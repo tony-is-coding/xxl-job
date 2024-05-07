@@ -44,17 +44,7 @@ public class InstanceTimeWheelService {
      * @param timerTask 需要执行的目标方法
      */
     public static void schedule(Long uniqueId, Long delayMS, TimerTask timerTask) {
-        if (delayMS <= LONG_DELAY_THRESHOLD_MS) {
-            realSchedule(uniqueId, delayMS, timerTask);
-            return;
-        }
-
-        long expectTriggerTime = System.currentTimeMillis() + delayMS;
-        TimerFuture longDelayTask = SLOW_TIMER.schedule(() -> {
-            CARGO.remove(uniqueId);
-            realSchedule(uniqueId, expectTriggerTime - System.currentTimeMillis(), timerTask);
-        }, delayMS - LONG_DELAY_THRESHOLD_MS, TimeUnit.MILLISECONDS);
-        CARGO.put(uniqueId, longDelayTask);
+        realSchedule(uniqueId, delayMS, timerTask);
     }
 
     /**
@@ -71,7 +61,8 @@ public class InstanceTimeWheelService {
         TimerFuture timerFuture = TIMER.schedule(() -> {
             CARGO.remove(uniqueId);
             timerTask.run();
-        }, delayMS, TimeUnit.MILLISECONDS);
+        }, delayMS, TimeUnit.MILLISECONDS, uniqueId);
+
         if (delayMS > MIN_INTERVAL_MS) {
             CARGO.put(uniqueId, timerFuture);
         }

@@ -14,7 +14,7 @@ public interface Timer {
     /**
      * 调度定时任务
      */
-    TimerFuture schedule(TimerTask task, long delay, TimeUnit unit);
+    TimerFuture schedule(TimerTask task, long delay, TimeUnit unit, long taskId);
 
     /**
      * 停止所有调度任务
